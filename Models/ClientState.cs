@@ -134,6 +134,19 @@
             }
 
             /// <summary>
+            /// Applies configurations to all client states.
+            /// </summary>
+            public async Task ApplyConfigurationsToAllClientsAsync()
+            {
+                foreach (var kvp in _clientStates)
+                {
+                    var clientState = kvp.Value;
+                    await clientState.State.ApplyConfigurationsAsync(); // NEW: Apply configurations to each state
+                }
+            }
+
+
+            /// <summary>
             /// Gets all client IDs currently in the system.
             /// </summary>
             public IEnumerable<string> GetAllClientIds()

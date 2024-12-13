@@ -2,6 +2,7 @@
 using HeaterSim.Models;
 using Version2.Models;
 using Version2.Models.Version2.Models;
+using Version2.Seeding; // Added namespace for seeding
 
 namespace Version2
 {
@@ -18,51 +19,33 @@ namespace Version2
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Use the seeder class to initialize EnvironmentState
             builder.Services.AddSingleton<EnvironmentState>(provider =>
             {
-                var state = new EnvironmentState();
-
-                // Initialize sensors
-                for (int i = 1; i <= 3; i++)
-                {
-                    state.Sensors.Add(new TemperatureSensor { Id = i, CurrentTemperature = 18 });
-                }
-
-                // Initialize heaters
-                for (int i = 1; i <= 3; i++)
-                {
-                    state.Heaters.Add(new HeatingControl { Id = i, Level = 0 });
-                }
-
-                // Initialize fans
-                for (int i = 1; i <= 3; i++)
-                {
-                    state.Fans.Add(new FanControl { Id = i, IsOn = false });
-                }
-
-                return state;
+                return EnvironmentStateSeeder.SeedEnvironmentState(); // Modified to call seeder
             });
+
             builder.Services.AddSingleton<ApiKeyManager>();
             builder.Services.AddSingleton<ClientStateManager>();
             builder.Services.AddSingleton<TemperatureCalculator>();
             builder.Services.AddHostedService<EnvironmentUpdater>();
             builder.Services.AddHostedService<StateCleanupService>();
             builder.Services.AddHostedService<SimulationMonitorService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            //if (app.Environment.IsDevelopment())
+            //{
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            // }
 
             app.UseHttpsRedirection();
 
             app.UseMiddleware<ApiKeyMiddleware>();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

@@ -5,8 +5,8 @@
         // Simulated storage for API keys
         private static readonly Dictionary<string, string> _apiKeys = new()
     {
-        { "client1", "503141" },
-        { "client2", "API_KEY_CLIENT_2" },
+        { "client1", "u0000770" },
+        { "client2", "u0012604" },
         { "client3", "API_KEY_CLIENT_3" }
     };
 

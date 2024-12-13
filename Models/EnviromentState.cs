@@ -1,10 +1,12 @@
-﻿namespace HeaterSim.Models
+﻿
+namespace HeaterSim.Models
 {
     public class EnvironmentState
     {
         public List<TemperatureSensor> Sensors { get; set; }
         public List<HeatingControl> Heaters { get; set; }
         public List<FanControl> Fans { get; set; }
+        public SimulationConfiguration Configuration { get; set; } // Added for centralized configurations
         public DateTime LastUpdated { get; set; }
         public DateTime? SimulationStartTime { get; set; }
 
@@ -13,6 +15,7 @@
             Sensors = new List<TemperatureSensor>();
             Heaters = new List<HeatingControl>();
             Fans = new List<FanControl>();
+            Configuration = new SimulationConfiguration(); // Initialize the configuration
             LastUpdated = DateTime.Now;
 
             // Automatically start a session
@@ -52,9 +55,25 @@
         }
 
         public bool IsSimulationRunning => SimulationStartTime.HasValue;
+
+        // New method to apply configurations to all components
+        public async Task ApplyConfigurationsAsync()
+        {
+            foreach (var sensor in Sensors)
+            {
+                Configuration.ApplySensorConfiguration(sensor);
+            }
+
+            foreach (var heater in Heaters)
+            {
+                Configuration.ApplyHeaterConfiguration(heater);
+            }
+
+            foreach (var fan in Fans)
+            {
+                await Configuration.ApplyFanConfigurationAsync(fan);
+            }
+        }
     }
-
-
-
-
 }
+

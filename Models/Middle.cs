@@ -16,6 +16,13 @@
 
         public async Task InvokeAsync(HttpContext context, ApiKeyManager apiKeyManager)
         {
+            // Allow requests to Swagger UI and related paths
+            if (context.Request.Path.StartsWithSegments("/swagger"))
+            {
+                await _next(context);
+                return;
+            }
+
             if (!context.Request.Headers.TryGetValue(ApiKeyHeaderName, out var extractedApiKey))
             {
                 context.Response.StatusCode = 401; // Unauthorized

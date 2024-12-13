@@ -18,6 +18,26 @@ namespace HeaterSim.Controllers
             _clientStateManager = clientStateManager;
         }
 
+        // NEW: Endpoint to expose heater configurations
+        [HttpGet("configurations")]
+        public IActionResult GetHeaterConfigurations()
+        {
+            var clientId = HttpContext.Items["ClientId"] as string;
+            if (string.IsNullOrEmpty(clientId))
+                return Unauthorized("Client ID is required.");
+
+            var state = _clientStateManager.GetOrCreateState(clientId);
+
+            var configurations = state.Heaters.Select(h => new HeaterConfigDTO
+            {
+                Id = h.Id,
+                CurrentLevel = h.Level // Exposes current heater level
+            });
+
+            return Ok(configurations);
+        }
+
+
         [HttpPost("{heaterId}")]
         public IActionResult SetHeaterLevel(int heaterId, [FromBody] int level)
         {
@@ -40,7 +60,8 @@ namespace HeaterSim.Controllers
             return Ok();
         }
     }
-
-
-
 }
+    
+
+
+

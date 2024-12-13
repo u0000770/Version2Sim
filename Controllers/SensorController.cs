@@ -18,6 +18,25 @@ namespace HeaterSim.Controllers
             _clientStateManager = clientStateManager;
         }
 
+        [HttpGet("configurations")]
+        public IActionResult GetSensorConfigurations()
+        {
+            var clientId = HttpContext.Items["ClientId"] as string;
+            if (string.IsNullOrEmpty(clientId))
+                return Unauthorized("Client ID is required.");
+
+            var state = _clientStateManager.GetOrCreateState(clientId);
+
+            var configurations = state.Sensors.Select(s => new SensorConfigDTO
+            {
+                Id = s.Id,
+                LogicDescription = s.Configuration?.Method.Name ?? "Default"
+            });
+
+            return Ok(configurations);
+        }
+
+
         [HttpGet("{sensorId}")]
         public IActionResult GetTemperature(int sensorId)
         {

@@ -1,11 +1,9 @@
-﻿namespace Version2.Models
-{
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using HeaterSim.Models;
-    using Microsoft.Extensions.Hosting;
+﻿
+using HeaterSim.Models;
 
+
+namespace Version2.Models
+{
     public class EnvironmentUpdater : BackgroundService
     {
         private readonly EnvironmentState _state;
@@ -30,18 +28,26 @@
         {
             var elapsedSeconds = (DateTime.Now - _state.LastUpdated).TotalSeconds;
 
+            // NEW: Adjust sensor temperatures dynamically based on configurations
+            _calculator.AdjustSensorTemperatures(_state.Sensors);
+
             foreach (var sensor in _state.Sensors)
             {
+                // Calculate net temperature change including dynamic heater and fan effects
                 double netTemperatureChange = _calculator.CalculateNetTemperatureChange(
                     _state.Heaters,
                     _state.Fans,
                     elapsedSeconds / 60); // Convert seconds to minutes
 
+                // Apply the calculated change
                 sensor.CurrentTemperature += netTemperatureChange;
+
+                Console.WriteLine($"Sensor {sensor.Id} temperature updated to: {sensor.CurrentTemperature}");
             }
 
+            // Update the timestamp
             _state.LastUpdated = DateTime.Now;
         }
     }
-
 }
+

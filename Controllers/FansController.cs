@@ -18,6 +18,25 @@ namespace Version2.Controllers
             _clientStateManager = clientStateManager;
         }
 
+        [HttpGet("configurations")]
+        public IActionResult GetFanConfigurations()
+        {
+            var clientId = HttpContext.Items["ClientId"] as string;
+            if (string.IsNullOrEmpty(clientId))
+                return Unauthorized("Client ID is required.");
+
+            var state = _clientStateManager.GetOrCreateState(clientId);
+
+            var configurations = state.Fans.Select(f => new FanConfigDTO
+            {
+                Id = f.Id,
+                DelaySeconds = (int)f.ResponseDelay.TotalSeconds
+            });
+
+            return Ok(configurations);
+        }
+
+
         [HttpPost("{fanId}")]
         public IActionResult SetFanState(int fanId, [FromBody] bool isOn)
         {

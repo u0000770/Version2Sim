@@ -47,6 +47,10 @@ namespace Version2.Models
                             continue;
                         }
 
+
+                        // Apply configurations before updating the environment
+                        await state.ApplyConfigurationsAsync(); // NEW: Apply configurations
+
                         // Update environment temperature
                         UpdateEnvironment(state, elapsed.TotalMinutes);
                     }
