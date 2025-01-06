@@ -20,6 +20,17 @@ namespace HeaterSim.Controllers
             _calculator = calculator;
         }
 
+        [HttpPost("reset")]
+        public IActionResult ResetClientState()
+        {
+            var clientId = HttpContext.Items["ClientId"] as string;
+            if (string.IsNullOrEmpty(clientId))
+                return Unauthorized("Client ID is required.");
+
+            _clientStateManager.ResetClientState(clientId);
+            return Ok("Client state has been reset.");
+        }
+
         [HttpPost]
         public IActionResult UpdateEnvironment()
         {

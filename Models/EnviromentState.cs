@@ -54,6 +54,30 @@ namespace HeaterSim.Models
             Console.WriteLine($"Simulation started automatically at {SimulationStartTime}");
         }
 
+        public void ResetState()
+        {
+            // Reset sensors to 17°C
+            foreach (var sensor in Sensors)
+            {
+                sensor.CurrentTemperature = 17.0;
+            }
+
+            // Turn off all fans
+            foreach (var fan in Fans)
+            {
+                fan.IsOn = false;
+            }
+
+            // Set all heaters to level 0
+            foreach (var heater in Heaters)
+            {
+                heater.Level = 0;
+            }
+
+            Console.WriteLine("Environment state has been reset: Fans off, Heaters off, Sensors to 17°C.");
+        }
+
+
         public bool IsSimulationRunning => SimulationStartTime.HasValue;
 
         // New method to apply configurations to all components

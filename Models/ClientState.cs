@@ -135,6 +135,19 @@
                 }
             }
 
+            public void ResetClientState(string clientId)
+            {
+                if (_clientStates.TryGetValue(clientId, out var clientState))
+                {
+                    clientState.State.ResetState();
+                    Console.WriteLine($"Client state for clientId={clientId} has been reset.");
+                }
+                else
+                {
+                    Console.WriteLine($"No state found for clientId={clientId}. Cannot reset.");
+                }
+            }
+
             /// <summary>
             /// Terminates simulations that exceed the maximum allowed duration.
             /// </summary>
