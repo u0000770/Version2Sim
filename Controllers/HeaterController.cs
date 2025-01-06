@@ -18,6 +18,25 @@ namespace HeaterSim.Controllers
             _clientStateManager = clientStateManager;
         }
 
+        [HttpGet("{heaterId}/level")]
+        public IActionResult GetHeaterLevel(int heaterId)
+        {
+            var clientId = HttpContext.Items["ClientId"] as string;
+            if (string.IsNullOrEmpty(clientId))
+                return Unauthorized("Client ID is required.");
+
+            var state = _clientStateManager.GetOrCreateState(clientId);
+
+            var heater = state.Heaters.FirstOrDefault(h => h.Id == heaterId);
+            if (heater == null)
+                return NotFound("Heater not found.");
+
+            Console.WriteLine($"Retrieved Heater {heaterId} Level: {heater.Level}");
+
+            return Ok(heater.Level);
+        }
+
+
         // NEW: Endpoint to expose heater configurations
         [HttpGet("configurations")]
         public IActionResult GetHeaterConfigurations()

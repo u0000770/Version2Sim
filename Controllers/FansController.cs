@@ -18,6 +18,25 @@ namespace Version2.Controllers
             _clientStateManager = clientStateManager;
         }
 
+        [HttpGet("{fanId}/state")]
+        public IActionResult GetFanState(int fanId)
+        {
+            var clientId = HttpContext.Items["ClientId"] as string;
+            if (string.IsNullOrEmpty(clientId))
+                return Unauthorized("Client ID is required.");
+
+            var state = _clientStateManager.GetOrCreateState(clientId);
+
+            var fan = state.Fans.FirstOrDefault(f => f.Id == fanId);
+            if (fan == null)
+                return NotFound("Fan not found.");
+
+            Console.WriteLine($"Retrieved Fan {fanId} State: {(fan.IsOn ? "On" : "Off")}");
+
+            return Ok(new { Id = fan.Id, IsOn = fan.IsOn });
+        }
+
+
         [HttpGet("configurations")]
         public IActionResult GetFanConfigurations()
         {
@@ -30,6 +49,7 @@ namespace Version2.Controllers
             var configurations = state.Fans.Select(f => new FanConfigDTO
             {
                 Id = f.Id,
+                State = f.IsOn,
                 DelaySeconds = (int)f.ResponseDelay.TotalSeconds
             });
 

@@ -19,12 +19,13 @@ namespace Version2
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Use the seeder class to initialize EnvironmentState
+            // Use the seeder class to initialise EnvironmentState
             builder.Services.AddSingleton<EnvironmentState>(provider =>
             {
                 return EnvironmentStateSeeder.SeedEnvironmentState(); // Modified to call seeder
             });
 
+            builder.Services.AddSingleton<EnvironmentState>();
             builder.Services.AddSingleton<ApiKeyManager>();
             builder.Services.AddSingleton<ClientStateManager>();
             builder.Services.AddSingleton<TemperatureCalculator>();

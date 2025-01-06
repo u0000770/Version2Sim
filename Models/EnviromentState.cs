@@ -15,13 +15,13 @@ namespace HeaterSim.Models
             Sensors = new List<TemperatureSensor>();
             Heaters = new List<HeatingControl>();
             Fans = new List<FanControl>();
-            Configuration = new SimulationConfiguration(); // Initialize the configuration
+            Configuration = new SimulationConfiguration(); // Initialise the configuration
             LastUpdated = DateTime.Now;
 
             // Automatically start a session
             SimulationStartTime = DateTime.Now;
 
-            // Initialize default sensors
+            //// Initialize default sensors
             for (int i = 1; i <= 3; i++)
             {
                 Sensors.Add(new TemperatureSensor
@@ -31,7 +31,7 @@ namespace HeaterSim.Models
                 });
             }
 
-            // Initialize default heaters
+            //// Initialize default heaters
             for (int i = 1; i <= 3; i++)
             {
                 Heaters.Add(new HeatingControl
@@ -41,7 +41,7 @@ namespace HeaterSim.Models
                 });
             }
 
-            // Initialize default fans
+            //// Initialize default fans
             for (int i = 1; i <= 3; i++)
             {
                 Fans.Add(new FanControl

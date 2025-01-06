@@ -29,6 +29,7 @@
     public class FanConfigDTO
     {
         public int Id { get; set; } // Fan ID
+        public bool State { get; set; }
         public int DelaySeconds { get; set; } // Response delay in seconds
     }
 

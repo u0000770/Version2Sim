@@ -27,23 +27,52 @@
             private readonly ConcurrentDictionary<string, int> _activeSimulations = new();
             private readonly int _maxSimulationsPerClient = 3;
 
-            /// <summary>
-            /// Gets or creates the state for the given client ID.
-            /// </summary>
+            ///// <summary>
+            ///// Gets or creates the state for the given client ID.
+            ///// </summary>
+            //public EnvironmentState GetOrCreateState(string clientId)
+            //{
+            //    var clientState = _clientStates.GetOrAdd(clientId, _ =>
+            //    {
+            //        var newState = new ClientState
+            //        {
+            //            State = new EnvironmentState(), // Initialisation is handled in EnvironmentState
+            //            LastAccessed = DateTime.Now
+            //        };
+
+            //        return newState;
+            //    });
+
+            //    clientState.LastAccessed = DateTime.Now; // Update access time
+            //    return clientState.State;
+            //}
+
+
             public EnvironmentState GetOrCreateState(string clientId)
             {
+                Console.WriteLine($"Retrieving state for clientId={clientId}");
+
                 var clientState = _clientStates.GetOrAdd(clientId, _ =>
                 {
-                    var newState = new ClientState
+                    Console.WriteLine($"Creating new state for clientId={clientId}");
+                    return new ClientState
                     {
-                        State = new EnvironmentState(), // Initialization is handled in EnvironmentState
+                        State = new EnvironmentState(),
                         LastAccessed = DateTime.Now
                     };
-
-                    return newState;
                 });
 
-                clientState.LastAccessed = DateTime.Now; // Update access time
+                clientState.LastAccessed = DateTime.Now;
+
+                // Log current state to ensure updates persist
+                Console.WriteLine("Current State:");
+                foreach (var fan in clientState.State.Fans)
+                    Console.WriteLine($"  Fan {fan.Id}: IsOn={fan.IsOn}");
+                foreach (var heater in clientState.State.Heaters)
+                    Console.WriteLine($"  Heater {heater.Id}: Level={heater.Level}");
+                foreach (var sensor in clientState.State.Sensors)
+                    Console.WriteLine($"  Sensor {sensor.Id}: Temperature={sensor.CurrentTemperature}");
+
                 return clientState.State;
             }
 
